@@ -1,170 +1,130 @@
-﻿# AGENTS.md
+# AGENTS.md
 
-Primary source of truth for AI-agent behavior in projects scaffolded by `django-mindoff`.
+Source of truth for AI-agent behavior in this project.
 
-## S1. Goal
+## S1. Project Purpose
 
-Build correct, maintainable features with minimal token usage by reusing Mindoff framework tools and documented patterns.
+Demonstrate `django-mindoff` features and prove its superiority through benchmark comparisons:
+- **Standard Django** (loops / pandas) vs **django-mindoff** native methods (`mo_crud_kit`, `mo_polars_kit`, etc.)
+- Each benchmark must measure and log execution time, memory, and query count for both approaches.
 
 ## S2. Read Order (Token Efficient)
 
-1. Read project `AGENTS.md` first.
-2. Open only the required files under `docs/`.
+1. Read this `AGENTS.md` first.
+2. Open only the required doc page from S4.1.
 3. Validate behavior from code before implementing.
-
-Do not scan the entire `docs/` tree when one focused page is enough.
 
 ## S3. Source of Truth
 
 - Runtime behavior: repository code.
-- Agent rules: project `AGENTS.md`.
-- Framework usage guidance: project `docs/`.
+- Agent rules: this `AGENTS.md`.
+- Framework usage guidance: installed package `docs/`.
 
 If code and docs conflict, ask the user which to follow, then update the other side in the same task.
 
 ## S4. Docs Source (Mandatory)
 
-`django-mindoff` documentation is available only inside the installed package:
+`django-mindoff` docs live only inside the installed package:
+`.../site-packages/django_mindoff/docs/`
 
-`.../site-packages/django_mindoff/docs/` (venv or global Python install).
-
-To locate docs, resolve `django_mindoff.__file__` and navigate to its sibling `docs/` folder.
-
-If installed docs are unavailable, rely on project `AGENTS.md` and local code, and ask the user before assuming undocumented behavior.
+Resolve `django_mindoff.__file__` to locate the sibling `docs/` folder. If installed docs are unavailable, rely on this file and local code — ask before assuming undocumented behavior.
 
 ## S4.1 Docs Topic Map (Use Only What You Need)
 
-Prefer these pages based on task type:
-
-- API implementation: `docs/architecture/api-kit.md`, `docs/developer_guide/api-development.md`
-- CRUD/data flow: `docs/architecture/crud-kit.md`, `docs/developer_guide/data-operations-crud.md`
-- Polars usage: `docs/architecture/polars-kit.md`, `docs/developer_guide/polars-utilities.md`
-- Validation: `docs/architecture/validation-kit.md`, `docs/developer_guide/validations.md`
-- Responses: `docs/architecture/response-kit.md`, `docs/developer_guide/responses.md`
-- Queue workflows: `docs/developer_guide/queued-api-processing.md`
-- Testing: `docs/architecture/tdd-kit.md`, `docs/developer_guide/test-driven-development.md`
-- CLI/scaffolding: `docs/architecture/management-kit.md`
-- Contribution/commit rules: `docs/community/contribution-guide.md`
+| Task | Doc page |
+|---|---|
+| API | `docs/architecture/api-kit.md`, `docs/developer_guide/api-development.md` |
+| CRUD / data | `docs/architecture/crud-kit.md`, `docs/developer_guide/data-operations-crud.md` |
+| Polars | `docs/architecture/polars-kit.md`, `docs/developer_guide/polars-utilities.md` |
+| Validation | `docs/architecture/validation-kit.md`, `docs/developer_guide/validations.md` |
+| Responses | `docs/architecture/response-kit.md`, `docs/developer_guide/responses.md` |
+| Queue | `docs/developer_guide/queued-api-processing.md` |
+| Testing | `docs/architecture/tdd-kit.md`, `docs/developer_guide/test-driven-development.md` |
+| Scaffolding | `docs/architecture/management-kit.md` |
+| Commits | `docs/community/contribution-guide.md` |
 
 ## S4.2 Expected Project Structure (Keep Aligned)
 
-Agents must keep generated and edited code aligned with Mindoff project structure:
+```
+apps/<app_name>/apis/
+apps/<app_name>/components/
+apps/<app_name>/tests/
+apps/<app_name>/models.py
+apps/<app_name>/urls.py
+config/settings.py
+config/urls.py
+config/responses.csv
+pytest.ini
+mindoff.py
+```
 
-- `apps/<app_name>/apis/`
-- `apps/<app_name>/components/`
-- `apps/<app_name>/tests/`
-- `apps/<app_name>/models.py`
-- `apps/<app_name>/urls.py`
-- `config/settings.py`
-- `config/urls.py`
-- `config/responses.csv` (response code registry)
-- `pytest.ini` (root-level test runner configuration)
-- `mindoff.py` (manager command entrypoint)
-
-Do not manually invent alternative structure for scaffolded components unless the user explicitly requests a custom layout.
+Do not invent alternative structure unless the user explicitly requests it.
 
 ## S5. Framework-First Implementation Rules
 
 - Prefer Mindoff kits over custom plumbing.
-- Keep request handlers thin; place reusable logic in components/services.
-- Use `MindoffAPIMixin` for API classes unless explicitly asked otherwise.
-- Use `mo_validation_kit` for validation flows.
-- Use `mo_response_kit` for consistent response format.
-- Use `mo_crud_kit` + `mo_polars_kit` for bulk/tabular data work.
-- Preserve backward compatibility unless explicitly asked for breaking changes.
+- Keep handlers thin; place reusable logic in components/services.
+- Use `MindoffAPIMixin`, `mo_validation_kit`, `mo_response_kit`.
+- Use `mo_crud_kit` + `mo_polars_kit` for bulk/tabular data — vectorized, no Python row loops.
 
 ## S5.1 Manager Commands for Scaffolding (Mandatory)
 
-For scaffolding tasks, agents must use manager commands with explicit arguments instead of creating/editing scaffold files manually.
+Use `python mindoff.py` manager commands — never create scaffold files manually.
 
-Do not use interactive `create` or `delete` flows for agent automation. Use the direct commands below:
+```
+python mindoff.py createapp <app_name>
+python mindoff.py createapi <app_name>/<api_name> [--url <path>]
+python mindoff.py createmodel <app_name>/<ModelName>
+python mindoff.py create_model_field <app_name>/<ModelName> <field_name> --to <parent_app>/<ParentModel>
+python mindoff.py deleteapp <app_name>
+```
 
-- Create app(s):
-  `python mindoff.py createapp <app_name> [<app_name_2> ...]`
-- Create API:
-  `python mindoff.py createapi <app_name>/<api_name> [--url <path_1> <path_2> ...]`
-- Create model:
-  `python mindoff.py createmodel <app_name>/<ModelName>`
-- Create foreign key field (model field):
-  `python mindoff.py create_model_field <app_name>/<ModelName> <field_name> --to <parent_app>/<ParentModel>`
-- Delete app(s):
-  `python mindoff.py deleteapp <app_name> [<app_name_2> ...]`
+After `createmodel` / `create_model_field`:
+```
+python manage.py makemigrations && python manage.py migrate
+```
 
-AI agents must not use `django-mindoff` CLI commands. Use `python mindoff.py ...` manager commands only.
+## S6. Benchmark Rules
 
-Why mandatory:
-
-- These commands enforce Mindoff scaffolding contracts and route/settings wiring.
-- Manual file creation can misalign with framework-generated structure.
-- Use manual edits only when the user explicitly asks for a custom/non-standard layout.
-
-Post-scaffold required steps:
-
-- After `createmodel` and `create_model_field`, run:
-  `python manage.py makemigrations`
-  `python manage.py migrate`
-
-## S6. Data and Polars Rules
-
-- Use vectorized operations; avoid Python row loops for bulk transforms.
-- Prefer lazy/streaming strategy for large datasets.
-- Use model-frame mapping when bulk model operations are required:
-  `{ModelClass: pl.DataFrame | pl.LazyFrame}`
+Every benchmark must:
+1. Implement **both** approaches (standard Django and django-mindoff) in the same file.
+2. Measure wall time, peak memory, and DB query count for each.
+3. Return or log a comparison dict: `{approach, time_ms, memory_mb, query_count}`.
+4. Include a focused test asserting the mindoff approach is faster or equal.
 
 ## S7. Testing Rules
 
-- Add/update focused tests when behavior changes.
-- Prefer Mindoff test helpers from `tdd_kit`.
-- Keep fixtures small and deterministic.
+- Use `tdd_kit` helpers; keep fixtures small and deterministic.
 - Run targeted tests first.
-- Follow testing rules from:
-  - `docs/architecture/tdd-kit.md`
-  - `docs/developer_guide/test-driven-development.md`
-- These testing rules are mandatory for AI-generated test changes.
+- Follow rules in `docs/architecture/tdd-kit.md` and `docs/developer_guide/test-driven-development.md`.
 
 ## S7.1 API Security Baseline
 
-- Production APIs must explicitly define `authentication_classes`.
-- Production APIs must explicitly define `permission_classes`.
-- Do not rely on implicit/default auth or permissions for protected endpoints.
+- Production APIs must explicitly define `authentication_classes` and `permission_classes`.
+- Do not rely on implicit/default auth for protected endpoints.
 
 ## S7.2 Queue Mode Preconditions
 
-If API uses `process_mode = "queue"`:
-
-- Ensure `REDIS_URL` is configured.
-- Ensure queue worker process is running before validating queue flows.
-- Add or update tests for queue-mode behavior (enqueue/status/retry/cancel as relevant).
+If API uses `process_mode = "queue"`: ensure `REDIS_URL` is configured and a queue worker is running before validating queue flows.
 
 ## S8. Git Commit Standard
 
 Source: `docs/community/contribution-guide.md`.
 
-Use:
+`:<gitmoji_code>: <Verb> <short description>`
 
-`:<gitmoji_code>: <Verb> <short action-oriented description>`
-
-Example:
-
-`:sparkles: Add bulk update validation`
+Example: `:sparkles: Add bulk update benchmark`
 
 ## S9. Documentation Duty
 
-When behavior, architecture, conventions, or scaffolding changes:
-
-1. Update the related docs in the same task.
+When behavior, architecture, or scaffolding changes:
+1. Update related docs in the same task.
 2. Remove stale/duplicate guidance.
-3. Keep references to canonical files.
-4. Keep this `AGENTS.md` updated when project-wide agent rules or workflow expectations change.
+3. Keep this `AGENTS.md` updated when project-wide rules change.
 
-## S10. Practical Outcome
+## S10. Definition of Done
 
-Prioritize clarity, correctness, and maintainability while minimizing token and implementation overhead.
-
-## S11. Definition of Done
-
-Before closing a task, ensure:
-
-1. Targeted tests for changed behavior pass.
-2. Relevant documentation is updated (`AGENTS.md`, related project docs, and docs pages if behavior changed).
-3. Commit message follows the Git commit standard in this file.
+1. Targeted tests pass.
+2. Benchmark comparison result is logged/returned.
+3. Relevant docs updated (`AGENTS.md` if rules change).
+4. Commit follows S8 standard.

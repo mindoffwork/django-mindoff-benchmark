@@ -7,4 +7,7 @@ urlpatterns = [
     path('', TemplateView.as_view(template_name='index.html')),
     path('mindoff/', include(mindoff_urls)),
     path('admin/', admin.site.urls),
+    path('v<int:version>/shop/', include('apps.shop.urls')),
+    path('v<int:version>/catalog/', include('apps.catalog.urls')),
+    path('v<int:version>/jobs/', include('apps.jobs.urls')),
 ]

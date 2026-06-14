@@ -1,0 +1,231 @@
+{
+  "info": {
+    "_postman_id": "7c62f20b-81f5-4ea3-8c29-4cf4c7e8c901",
+    "name": "Django Mindoff Showcase",
+    "description": "Import this collection after running the local Django server. It covers the shop, catalog, and optional jobs demo endpoints.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:8000",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Shop",
+      "description": "Managed API, response envelope, validation, and versioning examples.",
+      "item": [
+        {
+          "name": "Get Profile V1",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/v1/shop/get_profile/",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "shop", "get_profile", ""]
+            },
+            "description": "Smallest response-envelope example."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Order V1",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customer_name\": \"Asha\",\n  \"customer_email\": \"asha@example.com\",\n  \"product_name\": \"Wireless Mouse\",\n  \"quantity\": 2\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/shop/create_order/",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "shop", "create_order", ""]
+            },
+            "description": "V1 returns a compact order confirmation."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Order V2",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customer_name\": \"Asha\",\n  \"customer_email\": \"asha@example.com\",\n  \"product_name\": \"Mechanical Keyboard\",\n  \"quantity\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/v2/shop/create_order/",
+              "host": ["{{base_url}}"],
+              "path": ["v2", "shop", "create_order", ""]
+            },
+            "description": "V2 keeps the same route but returns richer metadata."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Catalog",
+      "description": "Bulk data, reporting, benchmark, chart, and CSV export examples.",
+      "item": [
+        {
+          "name": "Import Products",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rows\": [\n    {\n      \"sku\": \"SKU-001\",\n      \"name\": \"Keyboard\",\n      \"price\": 49.99,\n      \"stock\": 20,\n      \"category\": \"accessories\"\n    },\n    {\n      \"sku\": \"\",\n      \"name\": \"Bad Product\",\n      \"price\": -10,\n      \"stock\": 5,\n      \"category\": \"misc\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/catalog/import_products/",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "catalog", "import_products", ""]
+            },
+            "description": "Imports valid rows, rejects invalid rows, and returns metrics."
+          },
+          "response": []
+        },
+        {
+          "name": "List Products Report",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/v1/catalog/list_products_report/",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "catalog", "list_products_report", ""]
+            },
+            "description": "Reads products through Mindoff CRUD and returns a category summary."
+          },
+          "response": []
+        },
+        {
+          "name": "Run Product Benchmark",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"row_count\": 1000\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/catalog/run_product_benchmark/",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "catalog", "run_product_benchmark", ""]
+            },
+            "description": "Runs native Django bulk baselines, validated Mindoff Polars CRUD benchmarks, and read conversion metrics."
+          },
+          "response": []
+        },
+        {
+          "name": "Benchmark Chart PNG",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/v1/catalog/benchmark_chart/",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "catalog", "benchmark_chart", ""]
+            },
+            "description": "Downloads the latest benchmark chart as PNG."
+          },
+          "response": []
+        },
+        {
+          "name": "Benchmark Values CSV",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/v1/catalog/benchmark_csv/",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "catalog", "benchmark_csv", ""]
+            },
+            "description": "Downloads the latest benchmark values as CSV with two-decimal time and memory values."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Jobs",
+      "description": "Optional queue-mode endpoint. Requires Redis and a Dramatiq worker outside Mindoff test helpers.",
+      "item": [
+        {
+          "name": "Generate Inventory Report",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"report_name\": \"weekly_inventory_snapshot\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/jobs/generate_inventory_report/",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "jobs", "generate_inventory_report", ""]
+            },
+            "description": "Submits the optional queue-mode inventory report job."
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

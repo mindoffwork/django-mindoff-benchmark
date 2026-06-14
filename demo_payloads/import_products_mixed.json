@@ -1,0 +1,18 @@
+{
+  "rows": [
+    {
+      "sku": "SKU-001",
+      "name": "Keyboard",
+      "price": 49.99,
+      "stock": 20,
+      "category": "accessories"
+    },
+    {
+      "sku": "",
+      "name": "Bad Product",
+      "price": -10,
+      "stock": 5,
+      "category": "misc"
+    }
+  ]
+}
