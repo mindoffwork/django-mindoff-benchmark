@@ -1,0 +1,27 @@
+code,title,description,http_status
+UNEXPECTED_ERR,Uh oh!,An Unexpected Error has occurred.,500
+API_CONFIG_ERR,Service Unavailable,Unable to process the request due to a configuration issue.,500
+VALIDATION_ERR,Validation Failed,Submitted data failed validation,400
+NOT_AUTHENTICATED,Authentication Required,Authentication credentials were not provided.,401
+AUTHENTICATION_FAILED,Authentication Failed,The provided authentication credentials are invalid.,401
+PERMISSION_DENIED,Access Denied,You do not have permission to perform this action.,403
+RATE_LIMITED,Too Many Requests,Request limit exceeded. Please try again shortly.,429
+INVALID_METHOD,Invalid Method,Method Not Allowed.,400
+API_RATE_LIMITED,Service Limit Reached,Service request limit exceeded. Please try again later.,400
+PAYLOAD_NOT_ALLOWED,Request Not Accepted,This request does not allow a payload.,400
+PAYLOAD_TOO_LARGE,Request Too Large,The request size exceeds the allowed limit,400
+INVALID_PAYLOAD,Invalid Payload,Payload does not match the accepted format.,400
+INVALID_API_VERSION,Invalid API Version,Given API version does not exist for this endpoint.,404
+SUCCESS,Success,Operation completed successfully.,200
+CREATED,Successfully Created,Information have been saved successfully.,200
+UPDATED,Successfully Updated,Information have been updated successfully.,200
+QUEUED,Queued,Operation added to queue.,200
+QUEUE_SERVICE_UNAVAILABLE,Queue Service Unavailable,Queuing service is currently unavailable. Please try again later.,503
+QUEUE_TASK_NOT_FOUND,Queued Task Not Found,The requested queued task does not exist or has expired.,404
+QUEUE_TASK_CANCELLED,Queue Task Cancelled,The queue task was cancelled before completion.,200
+QUEUE_TASK_PENDING,Queue Task Pending,The queue task has not started yet.,200
+QUEUE_TASK_RUNNING,Queue Task Running,The queue task is currently in progress.,200
+QUEUE_TASK_FAILED,Queue Task Failed,The queue task failed during execution.,200
+QUEUE_TASK_UNKNOWN_STATUS,Queue Task Unknown Status,The queue task is in an unknown state.,200
+QUEUE_TASK_NOT_CANCELLABLE,Queue Task Not Cancellable,The queue task cannot be cancelled in its current state.,400
+QUEUE_TASK_NOT_RETRIABLE,Queue Task Not Retriable,Only failed queue tasks can be retried.,400
