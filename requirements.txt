@@ -1,2 +1,5 @@
 django-mindoff
 matplotlib
+connectorx
+pandas
+psutil

@@ -1,3 +1,4 @@
 {
-  "row_count": 1000
+  "row_count": [5000, 25000, 50000],
+  "iterations": 5
 }

@@ -91,7 +91,7 @@
     },
     {
       "name": "Catalog",
-      "description": "Bulk data, reporting, benchmark, chart, and CSV export examples.",
+      "description": "Bulk data, reporting, and benchmark artifact examples.",
       "item": [
         {
           "name": "Import Products",
@@ -147,7 +147,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"row_count\": 1000\n}",
+              "raw": "{\n  \"row_count\": [5000, 25000, 50000],\n  \"iterations\": 5\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -159,35 +159,7 @@
               "host": ["{{base_url}}"],
               "path": ["v1", "catalog", "run_product_benchmark", ""]
             },
-            "description": "Runs native Django bulk baselines, validated Mindoff Polars CRUD benchmarks, and read conversion metrics."
-          },
-          "response": []
-        },
-        {
-          "name": "Benchmark Chart PNG",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{base_url}}/v1/catalog/benchmark_chart/",
-              "host": ["{{base_url}}"],
-              "path": ["v1", "catalog", "benchmark_chart", ""]
-            },
-            "description": "Downloads the latest benchmark chart as PNG."
-          },
-          "response": []
-        },
-        {
-          "name": "Benchmark Values CSV",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{base_url}}/v1/catalog/benchmark_csv/",
-              "host": ["{{base_url}}"],
-              "path": ["v1", "catalog", "benchmark_csv", ""]
-            },
-            "description": "Downloads the latest benchmark values as CSV with two-decimal time and memory values."
+            "description": "Runs one serialized DRF serializer many=True vs Mindoff create/read/update benchmark and writes CSV plus time-line, memory-line, per-count time-bar, and per-count memory-bar PNG artifacts under output/."
           },
           "response": []
         }

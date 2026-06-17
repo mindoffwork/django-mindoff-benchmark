@@ -13,7 +13,10 @@ class ImportProductsV1APIView(MindoffAPIMixin):
     authentication_classes = []
     permission_classes = [AllowAny]
     method: Literal["get", "post", "put", "delete"] = "post"
-    payload_validation = "strict"
+    process_mode: Literal["direct", "queue"] = "direct"
+    max_payload_size = 10
+    max_payload_depth = 4
+    payload_validation = "basic"
     payload_schema = {"rows": [dict]}
 
     def run(self, request, *args, **kwargs):

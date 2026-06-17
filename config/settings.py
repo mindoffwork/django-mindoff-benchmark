@@ -18,18 +18,35 @@ from decouple import config
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+def env_bool(name: str, default: bool = False) -> bool:
+    value = config(name, default=default)
+    if isinstance(value, bool):
+        return value
+
+    normalized = str(value).strip().lower()
+    if normalized in {"1", "true", "t", "yes", "y", "on", "debug", "development", "dev"}:
+        return True
+    if normalized in {"0", "false", "f", "no", "n", "off", "release", "production", "prod"}:
+        return False
+    raise ValueError(f"Invalid truth value for {name}: {value}")
+
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 SECRET_KEY = config('DJANGO_SECRET_KEY')
 # SECURITY WARNING: keep the secret key used in production secret!
 
-DEBUG = config('DEBUG', cast=bool, default=True)
+DEBUG = env_bool('DEBUG', default=True)
 # SECURITY WARNING: don't run with debug turned on in production!
 
 # SECURITY WARNING: Restrict ALLOWED_HOSTS and CORS in production.
-ALLOWED_HOSTS = []
-CORS_ALLOW_ALL_ORIGINS = config("CORS_ALLOW_ALL_ORIGINS", cast=bool, default=True)
+ALLOWED_HOSTS = config(
+    "ALLOWED_HOSTS",
+    default="127.0.0.1,localhost,testserver",
+    cast=lambda value: [host.strip() for host in str(value).split(",") if host.strip()],
+)
+CORS_ALLOW_ALL_ORIGINS = env_bool("CORS_ALLOW_ALL_ORIGINS", default=True)
 
 
 # Application definition
@@ -88,6 +105,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
+        'OPTIONS': {
+            'timeout': 60,
+        },
     }
 }
 

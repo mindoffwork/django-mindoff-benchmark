@@ -36,6 +36,6 @@ class TestImportProductsV1APIView(MindoffTestCase):
         assert data["inserted_rows"] == 1
         assert data["rejected_rows"] == 1
         assert {m["approach"] for m in data["metrics"]} == {
-            "django_row_loop",
+            "django_bulk_validated",
             "django_mindoff_polars",
         }

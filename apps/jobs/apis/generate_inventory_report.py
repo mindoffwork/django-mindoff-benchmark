@@ -13,8 +13,10 @@ class GenerateInventoryReportV1APIView(MindoffAPIMixin):
     authentication_classes = []
     permission_classes = [AllowAny]
     method: Literal["get", "post", "put", "delete"] = "post"
-    process_mode = "queue"
+    process_mode: Literal["direct", "queue"] = "queue"
     allow_duplicate_queue = True
+    max_payload_size = 2
+    max_payload_depth = 2
     payload_validation = "basic"
     payload_schema = {"report_name": str}
     progress_steps = {

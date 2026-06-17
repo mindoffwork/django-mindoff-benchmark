@@ -1,9 +1,6 @@
-from django.shortcuts import render
-
 from .apis.get_profile import GetProfileV1APIView
 from django_mindoff import mo_api_kit
 from .apis.create_order import CreateOrderV1APIView, CreateOrderV2APIView
-# Create your views here.
 
 
 

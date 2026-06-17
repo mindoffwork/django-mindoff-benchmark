@@ -12,10 +12,9 @@ The project is intentionally small. A new user should be able to clone it, run i
 - Centralized response envelopes from `mo_response_kit`
 - Request and row-level validation examples
 - Bulk/data workflows with `mo_crud_kit` and Polars
-- Django row-loop, Django native bulk, and Mindoff Polars benchmark lanes
-- Pandas vs Mindoff Polars/LazyFrame read-conversion comparison
-- Matplotlib benchmark chart generation
-- CSV benchmark export with two-decimal time and memory values
+- Minimal DRF serializer `many=True` vs Mindoff benchmark lanes for create, read, and update
+- Single benchmark API that generates clean time-line and memory-line PNG charts plus a CSV export
+- Latest Mindoff CRUD contract: `validation_level` for write validation plus `with_stats` and `skip_db_fill` controls
 - Optional queue-mode API using Redis and Dramatiq
 
 ## Setup
@@ -50,9 +49,7 @@ It includes every showcase endpoint and a `base_url` variable set to `http://127
 | `shop` | Versioned order API V2 | `POST /v2/shop/create_order/` |
 | `catalog` | Bulk row validation and import metrics | `POST /v1/catalog/import_products/` |
 | `catalog` | Queryset to DataFrame reporting | `GET /v1/catalog/list_products_report/` |
-| `catalog` | Create/update benchmarks and read conversion comparison | `POST /v1/catalog/run_product_benchmark/` |
-| `catalog` | Matplotlib benchmark chart | `GET /v1/catalog/benchmark_chart/` |
-| `catalog` | Raw benchmark values as CSV | `GET /v1/catalog/benchmark_csv/` |
+| `catalog` | Create/update/read benchmarks with CSV and PNG artifacts | `POST /v1/catalog/run_product_benchmark/` |
 | `jobs` | Optional queue-mode API | `POST /v1/jobs/generate_inventory_report/` |
 
 ## Shop Demo
@@ -79,49 +76,68 @@ Demonstrates bulk product workflows and performance comparison.
 curl -X POST http://127.0.0.1:8000/v1/catalog/import_products/ -H "Content-Type: application/json" -d @demo_payloads/import_products_mixed.json
 curl http://127.0.0.1:8000/v1/catalog/list_products_report/
 curl -X POST http://127.0.0.1:8000/v1/catalog/run_product_benchmark/ -H "Content-Type: application/json" -d @demo_payloads/run_product_benchmark.json
-curl http://127.0.0.1:8000/v1/catalog/benchmark_chart/ --output catalog_benchmark.png
-curl http://127.0.0.1:8000/v1/catalog/benchmark_csv/ --output catalog_benchmark_values.csv
 ```
 
-The benchmark is intentionally split by workflow level:
+The benchmark is intentionally minimalist and uses warm runs:
 
-- `native_bulk_create` and `native_bulk_update`: Django's own `bulk_create()` / `bulk_update()` primitives. These are included as native baselines, not as the thing Mindoff is trying to replace.
-- `validated_bulk_create` and `validated_bulk_update`: Django row-loop or serializer-style write flow vs Mindoff Polars + CRUD validation. This is the scale-oriented comparison where Mindoff is expected to pay off.
-- `read_conversion`: regular Django queryset conversion to Pandas vs Mindoff queryset conversion to Polars/LazyFrame. This is not claiming Django queryset reads are slower; it is mainly for memory/debug comparison of the conversion workflow.
+- `serializer_create`: DRF `ProductModelSerializer(data=rows, many=True).save()` vs Mindoff validated Polars create.
+- `serializer_read`: DRF `ProductModelSerializer(qs, many=True)` CSV export vs Mindoff Polars read CSV export.
+- `serializer_update`: DRF `ProductModelSerializer(products, data=rows, many=True, partial=True).save()` vs Mindoff validated Polars update.
 
-Use larger row counts for meaningful Mindoff/Polars comparisons. Small batches can be faster with ordinary Django because Mindoff pays fixed setup costs for frame construction, model-aware validation, and SQLAlchemy/Polars write execution. The package complements Django for bulk tabular workloads; it is not a replacement for Django's native ORM.
+Mindoff write paths use the current CRUD API:
+
+- `validation_level="full"` for validated create/update
+- `validation_level="none"` for the lazy streaming paths
+- `read(..., batch_size=1000, is_lazy=..., with_stats=False)` for the export benchmarks
+- `skip_db_fill=True` for full-frame updates where the benchmark already supplies every column
+- A per-process/cross-process benchmark lock plus SQLite `busy_timeout`/WAL pragmas keep repeated local benchmark calls from overlapping against the demo SQLite database
+
+Each operation runs one warmup and at least five measured iterations; `time_ms` is the median of the measured runs. Memory is measured in a separate isolated worker process per benchmark lane after deterministic inputs are prepared, then sampled as peak RSS delta so native Polars/Arrow allocations are counted without noise from the long-running API process. Query count is captured in a separate pass and is diagnostic only: Mindoff write paths can bypass Django's cursor capture, so `0` does not mean no database work.
+
+Use PostgreSQL or MySQL and larger row counts for meaningful Mindoff/Polars comparisons. Example scale payload:
+
+```json
+{
+  "row_count": [50000, 250000, 1000000],
+  "iterations": 5
+}
+```
+
+Small batches can favor ordinary Django because Mindoff pays fixed setup costs for frame construction and model-aware validation. The package complements Django for bulk tabular workloads; it is not a replacement for Django's native ORM.
 
 Benchmark metrics use the same shape everywhere:
 
 ```json
 {
-  "approach": "django_mindoff_polars",
-  "scenario": "validated_bulk_update",
-  "row_count": 1000,
+  "approach": "mindoff",
+  "scenario": "serializer_update",
+  "row_count": 5000,
   "time_ms": 12.34,
   "memory_mb": 0.56,
-  "query_count": 3
+  "query_count": 3,
+  "iterations": 5,
+  "backend": "postgresql",
+  "memory_metric": "peak_rss_delta_mb"
 }
 ```
 
 The CSV export uses these columns for debugging and spreadsheet inspection:
 
 ```csv
-scenario,approach,row_count,time_ms,time_seconds,memory_mb,query_count
-validated_bulk_update,django_mindoff_polars,1000,12.34,0.01,0.56,3
+scenario,approach,row_count,time_ms,time_seconds,memory_mb,query_count,query_count_note,iterations,warmup_iterations,backend,memory_metric
+serializer_update,mindoff,5000,12.34,0.01,0.56,0,"Mindoff writes may bypass Django cursor capture; 0 does not mean no DB work.",5,1,postgresql,peak_rss_delta_mb
 ```
 
-The API downloads are also written locally under `output/`:
+The benchmark API writes these local artifacts and returns their paths in `data.exports`:
 
-- `output/catalog_benchmark.png`
+- `output/catalog_benchmark_time_line.png`
+- `output/catalog_benchmark_memory_line.png`
 - `output/catalog_benchmark_values.csv`
 
 Inspect:
 
 - `apps/catalog/components/products.py`
 - `apps/catalog/apis/run_product_benchmark.py`
-- `apps/catalog/apis/benchmark_chart.py`
-- `apps/catalog/apis/benchmark_csv.py`
 
 ## Jobs Demo
 

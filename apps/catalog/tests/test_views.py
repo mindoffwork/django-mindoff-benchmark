@@ -27,21 +27,3 @@ class TestRunProductBenchmarkRouter(MindoffRouterTestCase):
 
     app_module = "apps.catalog.views"
     router_function_name = "run_product_benchmark_router"
-
-
-
-@pytest.mark.django_db
-class TestBenchmarkChartRouter(MindoffRouterTestCase):
-    """Tests for the Benchmark Chart version router."""
-
-    app_module = "apps.catalog.views"
-    router_function_name = "benchmark_chart_router"
-
-
-
-@pytest.mark.django_db
-class TestBenchmarkCsvRouter(MindoffRouterTestCase):
-    """Tests for the Benchmark Csv version router."""
-
-    app_module = "apps.catalog.views"
-    router_function_name = "benchmark_csv_router"

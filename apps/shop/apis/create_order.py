@@ -18,6 +18,9 @@ class CreateOrderV1APIView(MindoffAPIMixin):
     authentication_classes = []
     permission_classes = [AllowAny]
     method: Literal["get", "post", "put", "delete"] = "post"
+    process_mode: Literal["direct", "queue"] = "direct"
+    max_payload_size = 2
+    max_payload_depth = 2
     payload_validation = "strict"
     payload_schema = {
         "customer_name": str,

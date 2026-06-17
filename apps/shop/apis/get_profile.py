@@ -13,6 +13,7 @@ class GetProfileV1APIView(MindoffAPIMixin):
     authentication_classes = []
     permission_classes = [AllowAny]
     method: Literal["get", "post", "put", "delete"] = "get"
+    process_mode: Literal["direct", "queue"] = "direct"
 
     def run(self, request, *args, **kwargs):
         return mo_response_kit.json_response(

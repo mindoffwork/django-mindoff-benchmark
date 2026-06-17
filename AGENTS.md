@@ -5,7 +5,7 @@ Source of truth for AI-agent behavior in this project.
 ## S1. Project Purpose
 
 Demonstrate `django-mindoff` features and prove its superiority through benchmark comparisons:
-- **Standard Django** (loops / pandas) vs **django-mindoff** native methods (`mo_crud_kit`, `mo_polars_kit`, etc.)
+- **DRF serializer `many=True` workflows** vs **django-mindoff** native methods (`mo_crud_kit`, `mo_polars_kit`, etc.)
 - Each benchmark must measure and log execution time, memory, and query count for both approaches.
 
 ## S2. Read Order (Token Efficient)
@@ -88,9 +88,13 @@ python manage.py makemigrations && python manage.py migrate
 
 Every benchmark must:
 1. Implement **both** approaches (standard Django and django-mindoff) in the same file.
-2. Measure wall time, peak memory, and DB query count for each.
-3. Return or log a comparison dict: `{approach, time_ms, memory_mb, query_count}`.
-4. Include a focused test asserting the mindoff approach is faster or equal.
+2. Measure clean wall time separately from memory and query-count passes.
+3. Use RSS / peak-RSS memory measurement so native Polars/Arrow allocations are counted.
+4. Run at least 5 measured iterations after a warmup and report median time.
+5. Keep headline charts focused on common API workflows: DRF serializer `many=True` create/read/update vs django-mindoff create/read/update.
+6. Return or log a comparison dict including `{approach, time_ms, memory_mb, query_count}` plus benchmark context.
+7. Treat `query_count` as diagnostic only; Mindoff write paths may bypass Django cursor capture.
+8. Include a focused test asserting the mindoff approach is faster or equal for an appropriate baseline/scale.
 
 ## S7. Testing Rules
 
