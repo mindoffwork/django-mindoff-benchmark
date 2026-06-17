@@ -1,0 +1,32 @@
+name: PR Validation
+
+# Keeps PR titles aligned with the project's gitmoji commit standard
+# (":emoji: Verb short description", e.g. "Add bulk update benchmark" prefixed
+# with an emoji).
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+    branches: [root, main]
+
+concurrency:
+  group: pr-validation-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  lint-pr-title:
+    name: Lint PR title
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check title format
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = context.payload.pull_request.title || "";
+            const titleRegex = /^\p{Emoji}[\p{Emoji}️⃣‍]*\s+[A-Z][a-z]+/u;
+            if (!titleRegex.test(title)) {
+              core.setFailed(
+                `PR title "${title}" does not match the required format.\n` +
+                `Expected: {emoji} {Capitalised verb} {short description}\n` +
+                `Example:  ✨ Add bulk update benchmark`
+              );
+            }

@@ -1,0 +1,67 @@
+name: CI
+
+# Runs on every PR into the protected branches and on every push to them
+# (a merged PR is a push, so this covers the "tests must pass before and after
+# merge" case with one workflow).
+on:
+  push:
+    branches: [root, main]
+  pull_request:
+    branches: [root, main]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Tests (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.12", "3.13"]
+
+    # The optional jobs queue endpoint talks to Redis. Tests don't require a live
+    # broker, but settings still need REDIS_URL to import — both are provided here.
+    services:
+      redis:
+        image: redis:7
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DJANGO_SECRET_KEY: ci-not-secret-key
+      DEBUG: "False"
+      CORS_ALLOW_ALL_ORIGINS: "True"
+      REDIS_URL: redis://127.0.0.1:6379/0
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Django system checks
+        run: python manage.py check
+
+      - name: Apply migrations
+        run: python manage.py migrate --noinput
+
+      - name: Run tests
+        run: pytest -q

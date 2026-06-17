@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "7c62f20b-81f5-4ea3-8c29-4cf4c7e8c901",
     "name": "Django Mindoff Showcase",
-    "description": "Import this collection after running the local Django server. It covers the shop, catalog, and optional jobs demo endpoints.",
+    "description": "Every endpoint in the django-mindoff example repo, ready to run.\n\nQuick start:\n1. Start the server: `python manage.py runserver`\n2. Import this collection into Postman.\n3. The `base_url` collection variable defaults to http://127.0.0.1:8000 — change it once and every request follows.\n\nRequests are grouped by app: Shop (managed APIs, responses, validation, versioning), Catalog (bulk data + the benchmark), and Jobs (optional queue mode).",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -15,10 +15,10 @@
   "item": [
     {
       "name": "Shop",
-      "description": "Managed API, response envelope, validation, and versioning examples.",
+      "description": "Managed APIs: response envelopes, payload validation, and same-route versioning (v1 vs v2).",
       "item": [
         {
-          "name": "Get Profile V1",
+          "name": "Get Profile (v1)",
           "request": {
             "method": "GET",
             "header": [],
@@ -27,63 +27,45 @@
               "host": ["{{base_url}}"],
               "path": ["v1", "shop", "get_profile", ""]
             },
-            "description": "Smallest response-envelope example."
+            "description": "The smallest possible managed API. Returns a static profile wrapped in the standard mo_response_kit envelope (code/category/message/data)."
           },
           "response": []
         },
         {
-          "name": "Create Order V1",
+          "name": "Create Order (v1)",
           "request": {
             "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"customer_name\": \"Asha\",\n  \"customer_email\": \"asha@example.com\",\n  \"product_name\": \"Wireless Mouse\",\n  \"quantity\": 2\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
+              "options": { "raw": { "language": "json" } }
             },
             "url": {
               "raw": "{{base_url}}/v1/shop/create_order/",
               "host": ["{{base_url}}"],
               "path": ["v1", "shop", "create_order", ""]
             },
-            "description": "V1 returns a compact order confirmation."
+            "description": "Validates the payload against the API's schema, creates the order, and returns a compact v1 confirmation. Try removing a field or sending a string for `quantity` to see the structured validation error."
           },
           "response": []
         },
         {
-          "name": "Create Order V2",
+          "name": "Create Order (v2)",
           "request": {
             "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"customer_name\": \"Asha\",\n  \"customer_email\": \"asha@example.com\",\n  \"product_name\": \"Mechanical Keyboard\",\n  \"quantity\": 1\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
+              "options": { "raw": { "language": "json" } }
             },
             "url": {
               "raw": "{{base_url}}/v2/shop/create_order/",
               "host": ["{{base_url}}"],
               "path": ["v2", "shop", "create_order", ""]
             },
-            "description": "V2 keeps the same route but returns richer metadata."
+            "description": "Same route and same payload as v1, but the v2 handler returns a richer response body. Shows how APIVersionRouter serves multiple versions side by side."
           },
           "response": []
         }
@@ -91,33 +73,24 @@
     },
     {
       "name": "Catalog",
-      "description": "Bulk data, reporting, and benchmark artifact examples.",
+      "description": "Bulk data workflows powered by mo_crud_kit + Polars, plus the headline create/read/update benchmark.",
       "item": [
         {
           "name": "Import Products",
           "request": {
             "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"rows\": [\n    {\n      \"sku\": \"SKU-001\",\n      \"name\": \"Keyboard\",\n      \"price\": 49.99,\n      \"stock\": 20,\n      \"category\": \"accessories\"\n    },\n    {\n      \"sku\": \"\",\n      \"name\": \"Bad Product\",\n      \"price\": -10,\n      \"stock\": 5,\n      \"category\": \"misc\"\n    }\n  ]\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
+              "options": { "raw": { "language": "json" } }
             },
             "url": {
               "raw": "{{base_url}}/v1/catalog/import_products/",
               "host": ["{{base_url}}"],
               "path": ["v1", "catalog", "import_products", ""]
             },
-            "description": "Imports valid rows, rejects invalid rows, and returns metrics."
+            "description": "Row-level bulk validation. The second row is intentionally invalid (empty sku, negative price): it is rejected with a reason while the valid row is imported. The response includes a standard-vs-mindoff timing comparison for the valid rows."
           },
           "response": []
         },
@@ -131,7 +104,7 @@
               "host": ["{{base_url}}"],
               "path": ["v1", "catalog", "list_products_report", ""]
             },
-            "description": "Reads products through Mindoff CRUD and returns a category summary."
+            "description": "Reads the full product table through mo_crud_kit into a Polars frame, then aggregates (totals, average price, per-category breakdown) with no Python row loop. Run Import Products first so there is data to report on."
           },
           "response": []
         },
@@ -139,27 +112,18 @@
           "name": "Run Product Benchmark",
           "request": {
             "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"row_count\": [5000, 25000, 50000],\n  \"iterations\": 5\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
+              "options": { "raw": { "language": "json" } }
             },
             "url": {
               "raw": "{{base_url}}/v1/catalog/run_product_benchmark/",
               "host": ["{{base_url}}"],
               "path": ["v1", "catalog", "run_product_benchmark", ""]
             },
-            "description": "Runs one serialized DRF serializer many=True vs Mindoff create/read/update benchmark and writes CSV plus time-line, memory-line, per-count time-bar, and per-count memory-bar PNG artifacts under output/."
+            "description": "Runs the create / read / update benchmark across each requested row count and writes deliverables under output/: one CSV (catalog_benchmark_values.csv) and one time+memory chart per operation (catalog_benchmark_create.png, _read.png, _update.png). Returned paths are in data.exports.\n\nThis can run for a while at large counts — DRF's serializer update path is the slow one. The committed charts in benchmarks/ were generated with row_count [10000, 50000, 100000]. Use bigger counts (and Postgres/MySQL) for the most meaningful comparison."
           },
           "response": []
         }
@@ -167,33 +131,24 @@
     },
     {
       "name": "Jobs",
-      "description": "Optional queue-mode endpoint. Requires Redis and a Dramatiq worker outside Mindoff test helpers.",
+      "description": "Optional queue-mode endpoint. Requires Redis running and a Dramatiq worker; the rest of the repo works without either.",
       "item": [
         {
           "name": "Generate Inventory Report",
           "request": {
             "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"report_name\": \"weekly_inventory_snapshot\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
+              "options": { "raw": { "language": "json" } }
             },
             "url": {
               "raw": "{{base_url}}/v1/jobs/generate_inventory_report/",
               "host": ["{{base_url}}"],
               "path": ["v1", "jobs", "generate_inventory_report", ""]
             },
-            "description": "Submits the optional queue-mode inventory report job."
+            "description": "Submits an inventory report job. Because the API sets process_mode = \"queue\", Mindoff enqueues the work and returns a task handle with progress steps instead of running inline. Needs `redis-server` and `dramatiq django_mindoff.queue_worker` running."
           },
           "response": []
         }

@@ -1,0 +1,58 @@
+name: 🐛 Bug report
+description: Something in this example/benchmark repo is broken or behaves incorrectly.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report this. Please confirm it on the latest
+        state of this repo and the latest `django-mindoff` release first.
+
+        Bugs in the **framework itself** belong upstream:
+        https://github.com/mindoffwork/django-mindoff/issues
+  - type: checkboxes
+    id: preflight
+    attributes:
+      label: Before you start
+      options:
+        - label: I searched existing issues and didn't find a duplicate.
+          required: true
+        - label: This is about the example/benchmark repo, not the django-mindoff framework.
+          required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What did you see, and why is it wrong?
+      placeholder: The benchmark crashed with… / list_products_report returned…
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Exact commands / requests. A minimal repro gets a fix much faster.
+      placeholder: |
+        1. python manage.py migrate
+        2. curl -X POST .../v1/catalog/run_product_benchmark/ -d '...'
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: OS, Python version, django-mindoff version (`pip show django-mindoff`), and the database you ran against.
+      placeholder: |
+        OS: Ubuntu 24.04
+        Python: 3.13
+        django-mindoff: 0.6.0
+        Database: SQLite (default) / PostgreSQL 16
+    validations:
+      required: true

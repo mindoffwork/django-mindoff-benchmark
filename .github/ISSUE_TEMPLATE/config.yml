@@ -1,0 +1,14 @@
+# Issues are for things that are broken or wrong. Everything else (feature ideas,
+# usage questions, "is this benchmark fair?") belongs in Discussions — mirroring
+# the django-mindoff contribution guide.
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 Feature ideas, questions & discussion
+    url: https://github.com/mindoffwork/django-mindoff-benchmark/discussions
+    about: Feature ideas, usage questions, or feedback on the benchmark methodology. Tag feature ideas with the `feature` label.
+  - name: 🔒 Report a security issue
+    url: https://github.com/mindoffwork/django-mindoff-benchmark/blob/root/SECURITY.md
+    about: Please report vulnerabilities privately — do not open a public issue.
+  - name: 📦 Issues in the django-mindoff framework
+    url: https://github.com/mindoffwork/django-mindoff/issues
+    about: Bugs in the framework itself (not this example) belong upstream.

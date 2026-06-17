@@ -1,0 +1,40 @@
+scenario,approach,row_count,time_ms,time_seconds,memory_mb,query_count,query_count_note,iterations,warmup_iterations,backend,memory_metric,remarks
+serializer_create,drf_serializer_many,10000,1453.91,1.45,25.43,12,Captured via Django CaptureQueriesContext in a separate pass.,5,1,sqlite,peak_rss_delta_mb,validated bulk write
+serializer_create,pandas,10000,1765.03,1.77,18.82,2,Captured via Django CaptureQueriesContext in a separate pass.,5,1,sqlite,peak_rss_delta_mb,no validation bulk write
+serializer_create,mindoff,10000,620.14,0.62,12.23,0,Mindoff writes may bypass Django cursor capture; 0 does not mean no DB work.,5,1,sqlite,peak_rss_delta_mb,validated bulk write
+serializer_create,mindoff_lazy,10000,760.15,0.76,4.99,0,Mindoff writes may bypass Django cursor capture; 0 does not mean no DB work.,5,1,sqlite,peak_rss_delta_mb,no validation bulk write
+serializer_read,pandas,10000,344.43,0.34,6.18,1,Captured via Django CaptureQueriesContext in a separate pass.,5,1,sqlite,peak_rss_delta_mb,frame via pandas.DataFrame.from_records; CSV via pandas to_csv
+serializer_read,polars_naive,10000,215.85,0.22,23.77,1,Captured via Django CaptureQueriesContext in a separate pass.,5,1,sqlite,peak_rss_delta_mb,frame via pl.DataFrame(list(qs)); CSV via Polars write_csv
+serializer_read,mindoff,10000,296.06,0.30,6.34,2,Mindoff writes may bypass Django cursor capture; 0 does not mean no DB work.,5,1,sqlite,peak_rss_delta_mb,frame via ConnectorX DB->Arrow; CSV via Polars write_csv
+serializer_read,mindoff_lazy,10000,274.45,0.27,13.54,3,Mindoff writes may bypass Django cursor capture; 0 does not mean no DB work.,5,1,sqlite,peak_rss_delta_mb,frame via streaming fetchmany; CSV via Polars sink_csv
+serializer_update,drf_serializer_many,10000,13426.25,13.43,97.57,12,Captured via Django CaptureQueriesContext in a separate pass.,5,1,sqlite,peak_rss_delta_mb,validated bulk write
+serializer_update,mindoff,10000,449.23,0.45,31.18,0,Mindoff writes may bypass Django cursor capture; 0 does not mean no DB work.,5,1,sqlite,peak_rss_delta_mb,validated bulk write
+serializer_update,mindoff_lazy,10000,521.02,0.52,23.46,0,Mindoff writes may bypass Django cursor capture; 0 does not mean no DB work.,5,1,sqlite,peak_rss_delta_mb,no validation bulk write
+serializer_create,drf_serializer_many,50000,7102.39,7.10,100.54,52,Captured via Django CaptureQueriesContext in a separate pass.,5,1,sqlite,peak_rss_delta_mb,validated bulk write
+serializer_create,pandas,50000,8137.78,8.14,49.59,2,Captured via Django CaptureQueriesContext in a separate pass.,5,1,sqlite,peak_rss_delta_mb,no validation bulk write
+serializer_create,mindoff,50000,2581.44,2.58,51.54,0,Mindoff writes may bypass Django cursor capture; 0 does not mean no DB work.,5,1,sqlite,peak_rss_delta_mb,validated bulk write
+serializer_create,mindoff_lazy,50000,2904.07,2.90,17.32,0,Mindoff writes may bypass Django cursor capture; 0 does not mean no DB work.,5,1,sqlite,peak_rss_delta_mb,no validation bulk write
+serializer_read,pandas,50000,1385.23,1.39,44.94,1,Captured via Django CaptureQueriesContext in a separate pass.,5,1,sqlite,peak_rss_delta_mb,frame via pandas.DataFrame.from_records; CSV via pandas to_csv
+serializer_read,polars_naive,50000,889.36,0.89,73.27,1,Captured via Django CaptureQueriesContext in a separate pass.,5,1,sqlite,peak_rss_delta_mb,frame via pl.DataFrame(list(qs)); CSV via Polars write_csv
+serializer_read,mindoff,50000,478.88,0.48,23.70,2,Mindoff writes may bypass Django cursor capture; 0 does not mean no DB work.,5,1,sqlite,peak_rss_delta_mb,frame via ConnectorX DB->Arrow; CSV via Polars write_csv
+serializer_read,mindoff_lazy,50000,641.95,0.64,8.94,3,Mindoff writes may bypass Django cursor capture; 0 does not mean no DB work.,5,1,sqlite,peak_rss_delta_mb,frame via streaming fetchmany; CSV via Polars sink_csv
+serializer_update,drf_serializer_many,50000,67329.68,67.33,421.81,52,Captured via Django CaptureQueriesContext in a separate pass.,5,1,sqlite,peak_rss_delta_mb,validated bulk write
+serializer_update,mindoff,50000,2328.63,2.33,94.13,0,Mindoff writes may bypass Django cursor capture; 0 does not mean no DB work.,5,1,sqlite,peak_rss_delta_mb,validated bulk write
+serializer_update,mindoff_lazy,50000,2791.89,2.79,77.80,0,Mindoff writes may bypass Django cursor capture; 0 does not mean no DB work.,5,1,sqlite,peak_rss_delta_mb,no validation bulk write
+serializer_create,drf_serializer_many,100000,14169.89,14.17,188.86,102,Captured via Django CaptureQueriesContext in a separate pass.,5,1,sqlite,peak_rss_delta_mb,validated bulk write
+serializer_create,pandas,100000,16342.10,16.34,132.75,2,Captured via Django CaptureQueriesContext in a separate pass.,5,1,sqlite,peak_rss_delta_mb,no validation bulk write
+serializer_create,mindoff,100000,4876.60,4.88,104.21,0,Mindoff writes may bypass Django cursor capture; 0 does not mean no DB work.,5,1,sqlite,peak_rss_delta_mb,validated bulk write
+serializer_create,mindoff_lazy,100000,5607.71,5.61,40.45,0,Mindoff writes may bypass Django cursor capture; 0 does not mean no DB work.,5,1,sqlite,peak_rss_delta_mb,no validation bulk write
+serializer_read,pandas,100000,2893.84,2.89,97.50,1,Captured via Django CaptureQueriesContext in a separate pass.,5,1,sqlite,peak_rss_delta_mb,frame via pandas.DataFrame.from_records; CSV via pandas to_csv
+serializer_read,polars_naive,100000,1952.78,1.95,159.41,1,Captured via Django CaptureQueriesContext in a separate pass.,5,1,sqlite,peak_rss_delta_mb,frame via pl.DataFrame(list(qs)); CSV via Polars write_csv
+serializer_read,mindoff,100000,843.62,0.84,50.29,2,Mindoff writes may bypass Django cursor capture; 0 does not mean no DB work.,5,1,sqlite,peak_rss_delta_mb,frame via ConnectorX DB->Arrow; CSV via Polars write_csv
+serializer_read,mindoff_lazy,100000,1232.38,1.23,6.38,3,Mindoff writes may bypass Django cursor capture; 0 does not mean no DB work.,5,1,sqlite,peak_rss_delta_mb,frame via streaming fetchmany; CSV via Polars sink_csv
+serializer_update,drf_serializer_many,100000,149697.08,149.70,816.70,102,Captured via Django CaptureQueriesContext in a separate pass.,5,1,sqlite,peak_rss_delta_mb,validated bulk write
+serializer_update,mindoff,100000,5300.50,5.30,155.39,0,Mindoff writes may bypass Django cursor capture; 0 does not mean no DB work.,5,1,sqlite,peak_rss_delta_mb,validated bulk write
+serializer_update,mindoff_lazy,100000,6835.86,6.84,114.01,0,Mindoff writes may bypass Django cursor capture; 0 does not mean no DB work.,5,1,sqlite,peak_rss_delta_mb,no validation bulk write
+serializer_read,drf_serializer_many,10000,,,,,,,,,,"* skipped — DRF serializers target API representation, not queryset->dataframe construction, so they are not a nominal queryset->Polars-frame path."
+serializer_read,drf_serializer_many,50000,,,,,,,,,,"* skipped — DRF serializers target API representation, not queryset->dataframe construction, so they are not a nominal queryset->Polars-frame path."
+serializer_read,drf_serializer_many,100000,,,,,,,,,,"* skipped — DRF serializers target API representation, not queryset->dataframe construction, so they are not a nominal queryset->Polars-frame path."
+serializer_update,pandas,10000,,,,,,,,,,* skipped — pandas has no idiomatic bulk-update path.
+serializer_update,pandas,50000,,,,,,,,,,* skipped — pandas has no idiomatic bulk-update path.
+serializer_update,pandas,100000,,,,,,,,,,* skipped — pandas has no idiomatic bulk-update path.
