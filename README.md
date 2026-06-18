@@ -37,7 +37,7 @@ The django-mindoff column above is the eager, fully validated write path. It run
 
 The charts and the full table across 10k, 50k, and 100k rows live in [benchmarks/](benchmarks/), and they are regenerated on every run.
 
-> These numbers were produced with **django-mindoff 0.6.0**, pinned in [requirements.txt](requirements.txt). When a new version ships, we bump the pin, run the benchmark again, and refresh the files in `benchmarks/`. So the table above always points at one specific, reproducible version rather than whatever happened to be latest.
+> These numbers were produced with **django-mindoff**, version pinned in [requirements.txt](requirements.txt). When a new version ships, we bump the pin, run the benchmark again, and refresh the files in `benchmarks/`. So the table above always points at one specific, reproducible version rather than whatever happened to be latest.
 
 One thing we want to say plainly: at small batch sizes, plain Django often wins. django-mindoff pays a fixed cost to build frames and run vectorized validation, and below a few thousand rows that overhead is not worth it. The framework is a complement for bulk tabular work, not a replacement for the ORM, and the benchmark is built to show both sides of that.
 

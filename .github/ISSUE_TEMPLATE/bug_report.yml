@@ -52,7 +52,7 @@ body:
       placeholder: |
         OS: Ubuntu 24.04
         Python: 3.13
-        django-mindoff: 0.6.0
+        django-mindoff: 0.7.0
         Database: SQLite (default) / PostgreSQL 16
     validations:
       required: true
