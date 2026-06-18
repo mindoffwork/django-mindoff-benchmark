@@ -21,25 +21,19 @@ If you only have ten minutes, start the server, hit one or two endpoints, open t
 
 ## The Numbers
 
-Here is the short version, measured at 100,000 rows on the default local SQLite database. Each result is the median of five timed runs after one warmup.
-
-| Operation | DRF serializer `many=True` | pandas | django-mindoff | Speedup |
-| --- | --- | --- | --- | --- |
-| **Create** (validated) | 14.17 s, 189 MB | 16.34 s, 133 MB | **4.88 s, 104 MB** | about 2.9x faster |
-| **Read** (queryset to frame to CSV) | not a frame path | 2.89 s, 98 MB | **0.84 s, 50 MB** | about 3.4x faster |
-| **Update** (validated) | 149.70 s, 817 MB | no bulk-update path | **5.30 s, 155 MB** | about 28x faster |
-
-The django-mindoff column above is the eager, fully validated write path. It runs the same model-aware validation a DRF serializer does, just vectorized instead of row by row. There is also a streaming lane that skips validation, and it is the memory champion. On the read at 100k rows it peaks at roughly 6 MB because it never holds the whole result set in memory at once.
+We are not going to paste benchmark figures into this README and let them go stale. The numbers stay where they are produced. The charts below are the actual output of the latest run, committed to [benchmarks/](benchmarks/) and re-rendered every time the benchmark runs, so what you see here is whatever the last run measured.
 
 | Create | Read | Update |
 | --- | --- | --- |
 | ![Create benchmark](benchmarks/catalog_benchmark_create.png) | ![Read benchmark](benchmarks/catalog_benchmark_read.png) | ![Update benchmark](benchmarks/catalog_benchmark_update.png) |
 
-The charts and the full table across 10k, 50k, and 100k rows live in [benchmarks/](benchmarks/), and they are regenerated on every run.
+Each chart plots time and memory as the row count grows, for every approach that has a real workflow for that operation. If you want the raw figures behind the lines, every measured value, across every row count we ran, sits in [benchmarks/catalog_benchmark_values.csv](benchmarks/catalog_benchmark_values.csv). It includes a `remarks` column that explains each comparison we left out and why.
 
-> These numbers were produced with **django-mindoff**, version pinned in [requirements.txt](requirements.txt). When a new version ships, we bump the pin, run the benchmark again, and refresh the files in `benchmarks/`. So the table above always points at one specific, reproducible version rather than whatever happened to be latest.
+The shape of the result is steady across all of it. For bulk create, read, and update, django-mindoff finishes faster and uses less memory than the DRF serializer with `many=True`, pandas, and plain Polars, and the lead grows as the data gets bigger. The eager lane does full, model-aware validation, the same work a serializer does, just vectorized instead of row by row. The streaming lane skips validation to stay flat on memory, because it never loads the whole result set at once.
 
-One thing we want to say plainly: at small batch sizes, plain Django often wins. django-mindoff pays a fixed cost to build frames and run vectorized validation, and below a few thousand rows that overhead is not worth it. The framework is a complement for bulk tabular work, not a replacement for the ORM, and the benchmark is built to show both sides of that.
+Worth saying plainly: at small batch sizes, plain Django usually wins. django-mindoff pays a fixed cost to build frames and run vectorized validation, and below a few thousand rows that overhead does not pay off. This is a complement for bulk tabular work, not a replacement for the ORM, and the benchmark is built to show both sides of that.
+
+> Keeping this honest is cheap. When a new django-mindoff release lands, we bump the pin in [requirements.txt](requirements.txt), run the benchmark, and drop the fresh files into [benchmarks/](benchmarks/). This README hardcodes no figures and no version, so it never needs editing for a new run. The exact version any result was produced with is always the one pinned in [requirements.txt](requirements.txt).
 
 ## What's Inside
 
@@ -164,7 +158,7 @@ That writes four files into `output/`:
 - `catalog_benchmark_values.csv`, every measured number, with a `remarks` column that records each comparison we deliberately skipped and why.
 - `catalog_benchmark_create.png`, `catalog_benchmark_read.png`, and `catalog_benchmark_update.png`, one file per operation, each with a time panel and a memory panel.
 
-The published copies in [benchmarks/](benchmarks/) came from exactly this command, run against the `django-mindoff` version pinned in [requirements.txt](requirements.txt). We refresh them on every new release: bump the pin, run again, copy the four files over the old ones, and update the version note in this README in the same change.
+The published copies in [benchmarks/](benchmarks/) came from exactly this command, run against the `django-mindoff` version pinned in [requirements.txt](requirements.txt). We refresh them on every new release: bump the pin, run again, and copy the four files over the old ones. The README points at the artifacts and the pin rather than restating any figures, so it does not need touching when the results change.
 
 ### What gets compared
 
@@ -185,7 +179,7 @@ Each operation is judged on both time and memory against every method that has a
 
 ### Make it a fair fight
 
-The committed numbers run on local SQLite, which is the worst case for django-mindoff. SQLite is single-writer and has no native bulk-load path. For numbers closer to production, point the project at PostgreSQL or MySQL and turn the row counts up:
+The committed charts run on local SQLite, which is the worst case for django-mindoff. SQLite is single-writer and has no native bulk-load path. For numbers closer to production, point the project at PostgreSQL or MySQL and turn the row counts up:
 
 ```json
 { "row_count": [50000, 250000, 1000000], "iterations": 5 }
