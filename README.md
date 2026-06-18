@@ -2,15 +2,12 @@
 
 _See what django-mindoff actually does, then measure it against the tools you already reach for._
 
-This is a small, runnable Django project that puts [django-mindoff][framework] to work on real endpoints. It is not a tutorial app and it is not a starter template. Its job is to let you read a few files, call a few endpoints, and decide for yourself whether the framework earns a place in your stack.
+This is a small, runnable Django project that puts [django-mindoff][framework] to work on real endpoints. It is not a tutorial app and it is not a starter template. Its job is to let you read a few files, call a few endpoints, and decide for yourself whether the framework can be of use in your stack.
 
-The headline is the benchmark. For bulk work over a Django model (create, read, update), it runs the same job four ways: a DRF serializer with `many=True`, pandas, plain Polars, and django-mindoff. Every number is measured the same way and written out as a CSV plus charts, so you are never asked to trust a claim you cannot reproduce.
-
-If you only have ten minutes, start the server, hit one or two endpoints, open the matching file, and run the benchmark once. That is enough to form an honest opinion.
+For bulk work over a Django model (create, read, update), it runs the same job four ways: a DRF serializer with `many=True`, pandas, plain Polars, and django-mindoff. Every number is measured the same way and written out as a CSV plus charts, so you are never asked to trust a claim you cannot reproduce.
 
 [![CI](https://github.com/mindoffwork/django-mindoff-benchmark/actions/workflows/ci.yml/badge.svg)](https://github.com/mindoffwork/django-mindoff-benchmark/actions/workflows/ci.yml)
 [![Python](https://img.shields.io/badge/python-3.12%20%7C%203.13-3776AB?logo=python&logoColor=white)](https://github.com/mindoffwork/django-mindoff-benchmark/actions/workflows/ci.yml)
-[![License: BSD-3-Clause](https://img.shields.io/badge/license-BSD--3--Clause-blue.svg)](LICENSE)
 [![django-mindoff](https://img.shields.io/pypi/v/django-mindoff.svg?logo=pypi&logoColor=white&label=django-mindoff)](https://pypi.org/project/django-mindoff/)
 
 **Framework**: [https://github.com/mindoffwork/django-mindoff][framework]
@@ -21,7 +18,7 @@ If you only have ten minutes, start the server, hit one or two endpoints, open t
 
 ## The Numbers
 
-We are not going to paste benchmark figures into this README and let them go stale. The numbers stay where they are produced. The charts below are the actual output of the latest run, committed to [benchmarks/](benchmarks/) and re-rendered every time the benchmark runs, so what you see here is whatever the last run measured.
+The charts below are the actual output of the latest run, committed to [benchmarks/](benchmarks/) and re-rendered every time the benchmark runs, so what you see here is whatever the last run measured.
 
 | Create | Read | Update |
 | --- | --- | --- |
@@ -31,7 +28,7 @@ Each chart plots time and memory as the row count grows, for every approach that
 
 The shape of the result is steady across all of it. For bulk create, read, and update, django-mindoff finishes faster and uses less memory than the DRF serializer with `many=True`, pandas, and plain Polars, and the lead grows as the data gets bigger. The eager lane does full, model-aware validation, the same work a serializer does, just vectorized instead of row by row. The streaming lane skips validation to stay flat on memory, because it never loads the whole result set at once.
 
-Worth saying plainly: at small batch sizes, plain Django usually wins. django-mindoff pays a fixed cost to build frames and run vectorized validation, and below a few thousand rows that overhead does not pay off. This is a complement for bulk tabular work, not a replacement for the ORM, and the benchmark is built to show both sides of that.
+Worth saying plainly: at small batch sizes, plain Django usually wins. django-mindoff with polars pays a fixed cost to build frames and run vectorized validation, and below a few thousand rows that overhead does not pay off. This is a complement for bulk tabular work, not a replacement for the ORM, and the benchmark is built to show both sides of that. When you run benchmark yourself, you can reduce the sample size to see where ORM wins to understand better when to use which.
 
 > Keeping this honest is cheap. When a new django-mindoff release lands, we bump the pin in [requirements.txt](requirements.txt), run the benchmark, and drop the fresh files into [benchmarks/](benchmarks/). This README hardcodes no figures and no version, so it never needs editing for a new run. The exact version any result was produced with is always the one pinned in [requirements.txt](requirements.txt).
 
@@ -131,7 +128,7 @@ curl http://127.0.0.1:8000/v1/catalog/list_products_report/
 
 ### Jobs: optional queue mode
 
-Only this endpoint needs Redis. Skip it and everything else still works.
+Only this endpoint needs Redis and Dramatiq. Skip it and everything else still works.
 
 ```bash
 redis-server
@@ -158,7 +155,7 @@ That writes four files into `output/`:
 - `catalog_benchmark_values.csv`, every measured number, with a `remarks` column that records each comparison we deliberately skipped and why.
 - `catalog_benchmark_create.png`, `catalog_benchmark_read.png`, and `catalog_benchmark_update.png`, one file per operation, each with a time panel and a memory panel.
 
-The published copies in [benchmarks/](benchmarks/) came from exactly this command, run against the `django-mindoff` version pinned in [requirements.txt](requirements.txt). We refresh them on every new release: bump the pin, run again, and copy the four files over the old ones. The README points at the artifacts and the pin rather than restating any figures, so it does not need touching when the results change.
+The published copies in [benchmarks/](benchmarks/) came from exactly this command, run against the `django-mindoff` version pinned in [requirements.txt](requirements.txt). 
 
 ### What gets compared
 
