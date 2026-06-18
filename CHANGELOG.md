@@ -9,3 +9,6 @@ automatically when a PR is merged into `root`, grouped by the PR's label
 
 ### Miscellaneous
 - ⬆️ Bump actions/checkout from 4 to 6 ([#1](https://github.com/mindoffwork/django-mindoff-benchmark/pull/1))
+
+### Internal
+- ⬆️ Bump actions/setup-python from 5 to 6 ([#2](https://github.com/mindoffwork/django-mindoff-benchmark/pull/2))
