@@ -13,3 +13,6 @@ automatically when a PR is merged into `root`, grouped by the PR's label
 ### Internal
 - ⬆️ Bump actions/github-script from 7 to 9 ([#3](https://github.com/mindoffwork/django-mindoff-benchmark/pull/3))
 - ⬆️ Bump actions/setup-python from 5 to 6 ([#2](https://github.com/mindoffwork/django-mindoff-benchmark/pull/2))
+
+### Enhancements
+- ⬆ Enhance CI workflow and update Django Mindoff dependency ([#4](https://github.com/mindoffwork/django-mindoff-benchmark/pull/4))
