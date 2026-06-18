@@ -6,6 +6,17 @@ name: CI
 on:
   push:
     branches: [root, main]
+    # Skip the suite for pushes that can't affect code — the changelog bot's
+    # auto-commit, README/doc edits, refreshed benchmark artifacts, etc. PRs are
+    # NOT filtered (see below), so required checks still run before every merge.
+    paths-ignore:
+      - "**/*.md"
+      - "LICENSE"
+      - "benchmarks/**"
+      - ".github/ISSUE_TEMPLATE/**"
+      - ".github/PULL_REQUEST_TEMPLATE.md"
+      - ".github/dependabot.yml"
+      - ".env.example"
   pull_request:
     branches: [root, main]
   workflow_dispatch:
