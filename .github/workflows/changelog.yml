@@ -1,7 +1,7 @@
 name: Changelog
 
-# On every PR merged into root, append an entry to CHANGELOG.md under a category
-# derived from the PR's label. Mirrors the django-mindoff framework's automation.
+# On every PR merged into root, append an entry to CHANGELOG.md under the PR's
+# merge date. Each entry includes its category inline for quick scanning.
 on:
   pull_request:
     types: [closed]
@@ -39,6 +39,7 @@ jobs:
             const number = pr.number;
             const prUrl  = pr.html_url;
             const labels = pr.labels.map(l => l.name);
+            const mergedAt = new Date(pr.merged_at).toISOString().slice(0, 10);
 
             const labelToCategory = {
               "bug":           "Fixes",
@@ -51,13 +52,12 @@ jobs:
             const allowedLabels = Object.keys(labelToCategory);
             const matchedLabel  = labels.find(l => allowedLabels.includes(l));
             const category      = matchedLabel ? labelToCategory[matchedLabel] : "Miscellaneous";
-
-            const entry = `- ${title} ([#${number}](${prUrl}))`;
+            const entry = `- ${title} ([${category}] [#${number}](${prUrl}))`;
 
             let changelog = fs.readFileSync("CHANGELOG.md", "utf8");
 
-            const recentHeader   = "## Recent Changes";
-            const categoryHeader = `### ${category}`;
+            const recentHeader = "## Recent Changes";
+            const dateHeader   = `### ${mergedAt}`;
 
             if (!changelog.includes(recentHeader)) {
               const titleLine = "<h1>Release Notes</h1>";
@@ -79,13 +79,13 @@ jobs:
 
             let block = changelog.slice(recentIdx, blockEnd);
 
-            if (block.includes(categoryHeader)) {
+            if (block.includes(dateHeader)) {
               block = block.replace(
-                new RegExp(`(${categoryHeader}[^\\n]*)`),
+                new RegExp(`(${dateHeader}[^\\n]*)`),
                 `$1\n${entry}`
               );
             } else {
-              block = block.trimEnd() + `\n\n${categoryHeader}\n${entry}\n`;
+              block = block.trimEnd() + `\n\n${dateHeader}\n${entry}\n`;
             }
 
             changelog = changelog.slice(0, recentIdx) + block + changelog.slice(blockEnd);
