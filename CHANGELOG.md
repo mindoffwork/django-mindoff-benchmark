@@ -16,3 +16,6 @@ automatically when a PR is merged into `root`, grouped by the PR's label
 
 ### Enhancements
 - ⬆ Enhance CI workflow and update Django Mindoff dependency ([#4](https://github.com/mindoffwork/django-mindoff-benchmark/pull/4))
+
+### Documentation
+- 📝 Point README benchmarks to generated artifacts ([#5](https://github.com/mindoffwork/django-mindoff-benchmark/pull/5))
