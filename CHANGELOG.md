@@ -7,6 +7,7 @@ automatically when a PR is merged into `root`, grouped by merge date, with the
 change category included inline on each entry.
 
 ### 2026-06-18
+- 📝 Rework changelog entries by merge date ([Internal] [#6](https://github.com/mindoffwork/django-mindoff-benchmark/pull/6))
 - Enhance CI workflow and update Django Mindoff dependency ([Enhancements] [#4](https://github.com/mindoffwork/django-mindoff-benchmark/pull/4))
 - Point README benchmarks to generated artifacts ([Documentation] [#5](https://github.com/mindoffwork/django-mindoff-benchmark/pull/5))
 
