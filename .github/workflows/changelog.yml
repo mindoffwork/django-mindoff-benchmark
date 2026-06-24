@@ -20,7 +20,7 @@ jobs:
       contents: write
       pull-requests: read
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           ref: ${{ github.base_ref }}
           # A PAT is needed to push to a protected branch. Fall back to the
