@@ -8,7 +8,7 @@
 # Dramatiq/Redis, pytest helpers, ...) under the "internal" extra. Installing the
 # bare package would leave this project unable to import its own settings, so pull
 # the extra explicitly.
-django-mindoff[internal]==0.7.0
+django-mindoff[internal]==0.8.0
 
 # Example-only extras: the benchmark renders PNG charts (matplotlib) and samples
 # peak RSS in a worker process (psutil). These are not part of the framework.
